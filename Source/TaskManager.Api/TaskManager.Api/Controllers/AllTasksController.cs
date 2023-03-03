@@ -27,7 +27,8 @@ namespace TaskManager.Api.Controllers
         [HttpGet]
         public async Task<AllTasksResponse> Get(CancellationToken token)
         {
-            return await this.taskInfoGetTasksBusinessService.ExecuteAsync(null, token);
+         var result = await this.taskInfoGetTasksBusinessService.ExecuteAsync(null, token);
+            return Ok(result);
         }
     }
 }
