@@ -29,8 +29,13 @@ namespace TaskManager.Api.Controllers
         [HttpGet]
         public async Task<AllTasksResponse> Get(CancellationToken token)
         {
+<<<<<<< HEAD
             logger.LogInformation("----- Getting all Tasks");
             return await this.taskInfoGetTasksBusinessService.ExecuteAsync(null, token);
+=======
+         var result = await this.taskInfoGetTasksBusinessService.ExecuteAsync(null, token);
+            return Ok(result);
+>>>>>>> 51d348520276f68d966a31621903e4720bc9f4ca
         }
     }
 }
