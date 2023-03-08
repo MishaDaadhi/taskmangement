@@ -27,6 +27,7 @@ namespace TaskManager.Business.Service
             this.taskPriorityandDueDateValidation = taskPriorityandDueDateValidation;
             this.mapper = mapper;
             this.taskMangerDataStoreService = taskMangerDataStoreService;
+            this.logger = logger;
         }
 
         public async Task<AddUpdateTaskResponse> ExecuteAsync(TaskInfo input, CancellationToken cancellationToken)
@@ -34,8 +35,10 @@ namespace TaskManager.Business.Service
             try
             {
                 var newtask = this.mapper.Map<TaskData>(input);
-                if (await taskPriorityandDueDateValidation.ExecuteAsync(newtask, cancellationToken) && input.Id == Guid.Empty)
+                newtask.PartitionKey = newtask.Priority;
+                if (await taskPriorityandDueDateValidation.ExecuteAsync(newtask, cancellationToken))//&& input.Id == Guid.Empty
                 {
+                    
                     var result = await taskMangerDataStoreService.ExecuteAsync(newtask, cancellationToken);
 
                     return new AddUpdateTaskResponse() { Success = true, Message = "Task added", TaskDto = this.mapper.Map<TaskInfo>(result) };

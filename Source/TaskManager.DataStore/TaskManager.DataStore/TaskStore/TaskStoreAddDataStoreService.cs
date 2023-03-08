@@ -28,7 +28,7 @@ namespace TaskManager.DataStore.TaskStore
         public async Task<TaskData> ExecuteAsync(TaskData taskDetail, CancellationToken cancellationToken)
         {
             try
-            {
+            {                
                 return await this.taskManagerDataStore.AddAsync(taskDetail);
             }
             catch (Exception ex)

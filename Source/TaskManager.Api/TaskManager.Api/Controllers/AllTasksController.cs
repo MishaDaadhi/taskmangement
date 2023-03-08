@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,15 +19,17 @@ namespace TaskManager.Api.Controllers
         /// get all tasks service
         /// </summary>
         private readonly ITaskInfoGetTasksBusinessService taskInfoGetTasksBusinessService;
-
-        public AllTasksController(ITaskInfoGetTasksBusinessService taskInfoGetTasksBusinessService)
+        private readonly ILogger<AllTasksController> logger;
+        public AllTasksController(ITaskInfoGetTasksBusinessService taskInfoGetTasksBusinessService, ILogger<AllTasksController> logger)
         {
            this.taskInfoGetTasksBusinessService = taskInfoGetTasksBusinessService;
+            this.logger = logger;
         }
 
         [HttpGet]
         public async Task<AllTasksResponse> Get(CancellationToken token)
         {
+            logger.LogInformation("----- Getting all Tasks");
             return await this.taskInfoGetTasksBusinessService.ExecuteAsync(null, token);
         }
     }

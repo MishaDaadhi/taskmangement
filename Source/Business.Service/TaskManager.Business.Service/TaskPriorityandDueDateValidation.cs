@@ -41,10 +41,10 @@ namespace TaskManager.Business.Service
                 }
 
                 //validate task doesn't exist   
-                if (input.Id != Guid.Empty && currenttask == null )
-                {
-                    return false;
-                }
+                //if (input.Id != Guid.Empty && currenttask == null )
+                //{
+                //    return false;
+                //}
 
                 if (input.Priority.ToEnum<TaskPriority>() == TaskPriority.High)
                 {

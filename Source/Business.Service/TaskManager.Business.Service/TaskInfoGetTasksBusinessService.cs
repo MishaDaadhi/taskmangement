@@ -48,7 +48,7 @@ namespace TaskManager.Business.Service
             catch (Exception ex)
             {
                 logger.LogError("Error thrown on getting list of tasks.", ex);
-                return new AllTasksResponse() { Success = false, Message = "Task added" };
+                return new AllTasksResponse() { Success = false, Message = "Task not found" };
             }
         }
     }

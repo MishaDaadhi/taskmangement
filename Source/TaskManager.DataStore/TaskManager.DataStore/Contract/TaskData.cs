@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using TaskManager.Core.DataStore;
@@ -43,6 +45,10 @@ namespace TaskManager.DataStore.Contract
         /// TAsk Status
         /// </summary>
         public string Status { get; set; }
+
+        [JsonProperty(PropertyName = "PartitionKey")]
+        public string PartitionKey { get; set; }       
+
 
     }
 }

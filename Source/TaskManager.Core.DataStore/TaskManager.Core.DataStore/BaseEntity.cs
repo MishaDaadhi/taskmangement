@@ -11,5 +11,7 @@ namespace TaskManager.Core.DataStore
         ///     entity unique identifier
         /// </summary>
         public virtual Guid Id { get; set; }
+
+        //public virtual int TimeToLive { get; set; }
     }
 }

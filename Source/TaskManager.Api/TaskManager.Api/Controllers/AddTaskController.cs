@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Polly;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TaskManager.Api.Contracts.Request;
@@ -27,7 +29,13 @@ namespace TaskManager.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                return await taskInfoAddBusinessService.ExecuteAsync(BuildTaskInfo(newtask), token);
+                var polly = Policy
+          .Handle<Exception>()
+          .RetryAsync(3, (exception, retryCount, context) => Console.WriteLine($"try: {retryCount}, Exception: {exception.Message}"));
+
+                var result = await polly.ExecuteAsync(async () => await taskInfoAddBusinessService.ExecuteAsync(BuildTaskInfo(newtask), token));
+
+                return result; // await taskInfoAddBusinessService.ExecuteAsync(BuildTaskInfo(newtask), token);
             }
 
             return new AddUpdateTaskResponse() { Success = false, Message = "Invalid data passed." };
@@ -37,6 +45,7 @@ namespace TaskManager.Api.Controllers
         {
             return new TaskInfo()
             {
+                Id = Guid.NewGuid(),
                 Name = newtask.Name,
                 Description = newtask.Description,
                 DueDate = newtask.DueDate,

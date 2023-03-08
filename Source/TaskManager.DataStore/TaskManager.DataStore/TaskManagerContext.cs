@@ -1,11 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using TaskManager.DataStore.Contract;
 
 namespace TaskManager.DataStore
 {
     public class TaskManagerContext:DbContext
     {
+        /// <summary>
+        /// Name of the partition key shadow property.
+        /// </summary>
+        public const string PartitionKey = nameof(PartitionKey);
+
         /// <summary>
         ///     Designated constructor
         /// </summary>
@@ -21,12 +25,24 @@ namespace TaskManager.DataStore
         /// </summary>
         public DbSet<TaskData> TaskStores { get; set; }
 
+        
         /// <inheritdoc/>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<TaskData>();
+
+          var taskData = builder.Entity<TaskData>()             
+              .HasPartitionKey(t => t.PartitionKey)
+              .HasDefaultTimeToLive(600)
+              .HasNoDiscriminator()
+              .HasKey(d => d.Id)
+            //.Property<int>("TimeToLive")
+            //.ToJsonProperty("ttl")
+            ;
+
+            builder.HasDefaultContainer("TaskManager");
+            //builder.HasAutoscaleThroughput(2);
         }
     }
 }

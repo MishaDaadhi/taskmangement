@@ -2,7 +2,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
+using TaskManager.Api.Extensions;
 using TaskManager.Business.Service;
 using TaskManager.DataStore;
 
@@ -22,7 +26,22 @@ namespace TaskManager.Api
         {
             services.AddBusinessServices();
             services.AddDataStoreServices(Configuration);
-            services.AddSwaggerGen();
+            services.AddApplicationInsightsTelemetry(Configuration);
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Task manger",
+                    Version = "v1",
+                    Description = "The Task manger Service HTTP API"
+                });
+            });
+            services.AddHealthChecks()// Add a health check for a SQL Server database
+        .AddCheck(
+            "TaskManagerDB-check",
+            new SqlConnectionHealthCheck(Configuration.GetConnectionString("TaskManagerConnectionString")),
+            HealthStatus.Unhealthy,
+            new string[] { "TaskManagerdb" });
             services.AddControllers();
         }
 
@@ -45,6 +64,7 @@ namespace TaskManager.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/hc");
             });
         }
     }

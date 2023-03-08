@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using TaskManager.Core.DataStore;
@@ -32,6 +33,7 @@ namespace TaskManager.DataStore
         /// <inheritdoc/>
         public async Task<T> AddAsync(T entity)
         {
+            
             await dbContext.Set<T>().AddAsync(entity);
             await dbContext.SaveChangesAsync();
 
@@ -41,7 +43,9 @@ namespace TaskManager.DataStore
         /// <inheritdoc/>
         public async Task DeleteAsync(T entity)
         {
-            throw new NotImplementedException();
+            _ = dbContext.Set<T>().Remove(entity);
+            await dbContext.SaveChangesAsync();
+            
         }
 
         /// <inheritdoc/>
